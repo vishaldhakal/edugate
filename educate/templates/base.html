@@ -1,0 +1,156 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    {% block css %}
+    {% endblock %}
+    <title>Accounts</title>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top" id="mynav">
+        <a class="navbar-brand text-success" href="#">
+            <strong>
+                Educate
+            </strong>
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link text-success" href="{% if request.user.is_student %}/{% else %}{% url 'teacherindex' %}{% endif %}"><strong>Home</strong></a>
+                </li>
+                {% if request.user.is_student %}
+                <li class="nav-item">
+                    <a class="nav-link text-success" href="{% url 'course_list' %}"><strong>Courses</strong></a>
+                </li>
+                {% endif %}
+                {% if request.user.is_teacher %}
+                <li class="nav-item">
+                    <a class="nav-link text-success" href="{% url 'teachercourses' %}"><strong>Courses</strong></a>
+                </li>
+                {% endif %}
+                <li class="nav-item">
+                    <a class="nav-link text-success" href="/"><strong>
+                        <svg class="bi bi-cart4" width="1.2em" height="1.2em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M0 2.5A.5.5 0 0 1 .5 2H2a.5.5 0 0 1 .485.379L2.89 4H14.5a.5.5 0 0 1 .485.621l-1.5 6A.5.5 0 0 1 13 11H4a.5.5 0 0 1-.485-.379L1.61 3H.5a.5.5 0 0 1-.5-.5zM3.14 5l.5 2H5V5H3.14zM6 5v2h2V5H6zm3 0v2h2V5H9zm3 0v2h1.36l.5-2H12zm1.11 3H12v2h.61l.5-2zM11 8H9v2h2V8zM8 8H6v2h2V8zM5 8H3.89l.5 2H5V8zm0 5a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0zm9-1a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0z"/>
+                        </svg>
+                    </strong></a>
+                </li>
+                {% if user.is_authenticated %}
+                
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
+                        data-toggle="dropdown" aria-expanded="false">
+                        <strong>
+                            <img src="{% static 'images/img-6.jpg' %}" class="img-fluid img-rounded prof-img">
+                        </strong>
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <li><a class="dropdown-item" href="#">Dashboard</a></li>
+                        <li><a class="dropdown-item" href="#">Settings</a></li>
+                    </ul>
+                </li>
+                {% endif %}
+            </ul>
+            <form class="d-flex mr-3 mb-2 mb-lg-0">
+                <input class="form-control mr-2" type="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-success" type="submit">Search</button>
+            </form>
+            {% if user.is_authenticated %}
+            <a class="btn btn-outline-success my-2 my-sm-0 mr-3" href="{% url 'logout' %}">Logout</a>
+            {% else %}
+            <a class="btn btn-outline-success my-2 my-sm-0 mr-3" href="{% url 'login' %}">Login</a>
+            <a class="btn btn-outline-success my-2 my-sm-0" href="{% url 'register' %}">Register</a>
+            {% endif %}
+        </div>
+    </nav>
+    {% block body %}
+    {% endblock %}
+    <!--Footer Start-->
+    <footer class="page-footer font-small bg-light pt-4 mt-5">
+        <div class="container text-center text-md-left">
+            <div class="row">
+                <div class="col-md-6 mt-md-0 mt-3">
+                    <h5 class="text-uppercase">EDUCATE NEPAL</h5>
+                    <div class="row">
+                        <div class="col">
+                            <ul class="list-unstyled">
+                                <li>
+                                    <a href="#!">Who are we ?</a>
+                                </li>
+                                <li>
+                                    <a href="#!">Frequently Asked Questions(FAQ)</a>
+                                </li>
+                                <li>
+                                    <a href="#!">Why us ?</a>
+                                </li>
+                                <li>
+                                    <a href="#!">How to tutorial !</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+                <hr class="clearfix w-100 d-md-none pb-3">
+                <div class="col-md-3 mb-md-0 mb-3">
+                    <h5 class="text-uppercase">Blogs</h5>
+                    <ul class="list-unstyled">
+                        <li>
+                            <a href="#!">Blog 1</a>
+                        </li>
+                        <li>
+                            <a href="#!">Blog 2</a>
+                        </li>
+                        <li>
+                            <a href="#!">Blog 3</a>
+                        </li>
+                        <li>
+                            <a href="#!">Blog 4</a>
+                        </li>
+                    </ul>
+
+                </div>
+                <div class="col-md-3 mb-md-0 mb-3">
+                    <h5 class="text-uppercase">Educate</h5>
+                    <ul class="list-unstyled">
+                        <li>
+                            <a href="#!">Carrer</a>
+                        </li>
+                        <li>
+                            <a href="#!">Blog</a>
+                        </li>
+                        <li>
+                            <a href="#!">Help Us</a>
+                        </li>
+                        <li>
+                            <a href="#!">About</a>
+                        </li>
+                    </ul>
+
+                </div>
+            </div>
+        </div>
+        <div class="footer-copyright text-center py-3">© 2020 Copyright:
+            <a href="#">educate</a>
+        </div>
+    </footer>
+    <!-- Footer  end -->
+    {% block js %}
+    {% endblock %}
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/app.js' %}"></script>
+</body>
+
+</html>

@@ -1,0 +1,197 @@
+{% extends 'base.html' %}
+
+{% block  body %}
+<div class="container mt-4">
+  <div class="container p-5 bg-danger text-light">
+    <div class="row">
+      <div class="col-md-12 col-sm-12">
+        <h3>
+          <strong>
+            {{course.course_name}}
+          </strong>
+        </h3>
+        <p class="lead">
+          {{course.course_description}}
+        </p>
+        <button class="btn btn-block btn-light">
+          Delete the Whole Course
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="my-4">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="#" class="text-success">Courses</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{course.course_name}}</li>
+      </ol>
+    </nav>
+  </div>
+
+  <!-- {% for topic in topics %}
+      {% with forloop.counter as outer_counter %}
+      {{topic.name}}
+        {% for les in lessons %}
+          {% if forloop.counter == outer_counter %}
+            {% for lesson in les %}
+              {{lesson.name}}
+            {% endfor %}
+          {% endif %}
+        {% endfor %}
+      {% endwith %}
+    {% endfor %} -->
+  <div class="row">
+    <div class="col-sm-12 col-md-12">
+      <div class="accordion" id="accordionExample">
+        {% for topic in topics %}
+        <div class="card">
+          <div class="card-header" id="heading{{forloop.counter}}">
+            <h2 class="mb-0">
+              <button {% if forloop.counter == 1 %} class="btn btn-danger btn-block text-left" {% else %}
+                class="btn btn-danger btn-block text-left collapsed" {% endif %} type="button" data-toggle="collapse"
+                data-target="#collapse{{forloop.counter}}" aria-expanded="true"
+                aria-controls="collapse{{forloop.counter}}">
+                <strong style="text-decoration:none !important;">{{topic.name}}</strong>
+                <span class="float-right">
+                  <svg class="bi bi-arrow-down-square-fill" width="1em" height="1em" viewBox="0 0 16 16"
+                    fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd"
+                      d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2zm6.5 5a.5.5 0 0 0-1 0v4.793L5.354 7.646a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 9.793V5z" />
+                  </svg>
+                </span>
+              </button>
+              <button class="btn btn-success" data-toggle="modal" data-target="#exampleModal{{topic.id}}">
+                <span>Edit Topic</span>
+                <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-pencil-square" fill="currentColor"
+                  xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456l-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+                  <path fill-rule="evenodd"
+                    d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z" />
+                </svg>
+              </button>
+
+
+              <div class="modal fade" id="exampleModal{{topic.id}}" tabindex="-1" aria-labelledby="exampleModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      <form action="{% url 'update_topic' topic.name %}" method="POST">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                          <label for="topicname" class="form-label">Name of the topic</label>
+                          <input type="text" class="form-control" name="topic_name" value="{{topic.name}}"
+                            contenteditable="true">
+                        </div>
+                        <button type="submit" class="btn btn-danger">Update Topic</button>
+                      </form>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+
+              <a class="btn btn-success" href="{% url 'delete_topic' topic.name %}">
+                <span>Delete Topic</span>
+                <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-trash" fill="currentColor"
+                  xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z" />
+                  <path fill-rule="evenodd"
+                    d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4L4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z" />
+                </svg>
+              </a>
+            </h2>
+          </div>
+          <div id="collapse{{forloop.counter}}" {% if forloop.counter == 1 %} class="collapse show" {% else %}
+            class="collapse" {% endif %} aria-labelledby="heading{{forloop.counter}}" data-parent="#accordionExample">
+            <div class="card-body">
+              <div class="row">
+                <div class="col-12">
+                  {% with forloop.counter as outer_counter %}
+                  {% for les in lessons %}
+                  {% if forloop.counter == outer_counter %}
+                  {% for lesson in les %}
+                  <button value="{{lesson.id}}" id="abcd"
+                    style="text-decoration: none;border: none;outline: none;">{{lesson.name}}</button>
+                  <button class="btn btn-success" data-toggle="modal" data-target="#exampleModal{{lesson.id}}">
+                    <span>Edit Lesson</span>
+                    <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-pencil-square" fill="currentColor"
+                      xmlns="http://www.w3.org/2000/svg">
+                      <path
+                        d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456l-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+                      <path fill-rule="evenodd"
+                        d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z" />
+                    </svg>
+                  </button>
+
+
+                  <div class="modal fade" id="exampleModal{{lesson.id}}" tabindex="-1"
+                    aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                          <form action="{% url 'update_lesson' lesson.name %}" method="POST"
+                            enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                              <label for="lessonname" class="form-label">Name of the Lesson</label>
+                              <input type="text" class="form-control" name="lesson_name" value="{{lesson.name}}"
+                                contenteditable="true">
+                            </div>
+                            <div class="mb-3">
+                              <label for="videoorfile" class="form-label">Upload any Video/File/Content</label>
+                              <input type="file" class="form-control" name="myfile">
+                            </div>
+                            <button type="submit" class="btn btn-danger">Update Lesson</button>
+                          </form>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <a class="btn btn-success" href="{% url 'delete_lesson' lesson.name %}">
+                    <span>Delete Lesson</span>
+                    <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-trash" fill="currentColor"
+                      xmlns="http://www.w3.org/2000/svg">
+                      <path
+                        d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z" />
+                      <path fill-rule="evenodd"
+                        d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4L4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z" />
+                    </svg>
+                  </a>
+                  <hr>
+                  {% endfor %}
+                  {% endif %}
+                  {% endfor %}
+                  {% endwith %}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

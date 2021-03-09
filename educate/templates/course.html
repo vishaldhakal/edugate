@@ -1,0 +1,395 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block body %}
+<div class="container mt-4">
+    <div class="container p-5 bg-danger text-light">
+        <div class="row">
+            <div class="col-md-6 col-sm-12">
+                <h3>
+                    <strong>
+                        {{course.course_name}}
+                    </strong>
+                </h3>
+                <p class="lead">
+                    {{course.course_description}}
+                </p>
+                
+                {% if check == 1 %}
+                <span>You are Enrolled in this course</span>
+                <br>
+                <a class="btn btn-light" href="{% url 'after_enroll' course.course_name %}">
+                    Go to Course
+                </a>
+                
+                {% else %}
+                <form action="{% url 'enrollment' course.id %}" method="POST" class="d-inline">
+                    {% csrf_token %}
+                    <input type="hidden" name="student" value="{{request.user.id}}">
+                    <input type="submit" value="Enroll Now" class="btn btn-light">
+                </form>
+                <span class="badge rounded-pill bg-light text-dark float-right p-3">$13.77</span>
+                {% endif %}
+                
+            </div>
+            <div class="col-md-6 col-sm-12">
+                <table class="table table-dark mt-3  mt-md-0">
+                    <thead>
+                        <tr>
+                            <th scope="col">Instructor</th>
+                            <th class="text-center">{{course.teacher.user.username}}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th scope="col">Average Ratings</th>
+                            <td class="text-center">{{course.teacher.average_review_ratings}}</td>
+                        </tr>
+                        <tr>
+                            <th scope="col">Total Students</th>
+                            <td class="text-center">{{course.teacher.no_of_enrolled_students}}</td>
+                        </tr>
+                        <tr>
+                            <th scope="col"> No of Reviews</th>
+                            <td class="text-center">{{course.teacher.num_of_reviews}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="my-4">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="#" class="text-success">Courses</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{course.course_name}}</li>
+            </ol>
+        </nav>
+    </div>
+    <div class="row my-4">
+        <div class="col-md-6">
+            <div class="list-group my-4">
+                <button type="button" class="list-group-item list-group-item-action bg-dark text-light"
+                    aria-current="true">
+                    What You Would Learn !
+                </button>
+                {% for what in whatyoulearn %}
+                <button type="button" class="list-group-item list-group-item-action">{{what.what_to_learn}}</button>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="list-group my-4">
+                <button type="button" class="list-group-item list-group-item-action bg-dark text-light"
+                    aria-current="true">
+                    What ko know before taking this course ?
+                </button>
+                {% for what in whattoknow %}
+                <button type="button" class="list-group-item list-group-item-action">{{what.what_to_know}}</button>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <!-- {% for topic in topics %}
+      {% with forloop.counter as outer_counter %}
+      {{topic.name}}
+        {% for les in lessons %}
+          {% if forloop.counter == outer_counter %}
+            {% for lesson in les %}
+              {{lesson.name}}
+            {% endfor %}
+          {% endif %}
+        {% endfor %}
+      {% endwith %}
+    {% endfor %} -->
+    <div class="row">
+        <div class="col-sm-12 col-md-6 container mb-4">
+            <div class="accordion" id="accordionExample">
+                <h2 class="bg-light text-light"><button class="btn btn-block text-left"><strong>Table of
+                            Contents</strong></button></h2>
+                {% for topic in topics %}
+                <div class="card">
+                    <div class="card-header" id="heading{{forloop.counter}}">
+                        <h2 class="mb-0">
+                            <button {% if forloop.counter == 1 %} class="btn btn-danger btn-block text-left" {% else %}
+                                class="btn btn-danger btn-block text-left collapsed" {% endif %} type="button"
+                                data-toggle="collapse" data-target="#collapse{{forloop.counter}}" aria-expanded="true"
+                                aria-controls="collapse{{forloop.counter}}">
+                                <strong style="text-decoration:none !important;">{{topic.name}}</strong>
+                                <span class="float-right">
+                                    <svg class="bi bi-arrow-down-square-fill" width="1em" height="1em"
+                                        viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                        <path fill-rule="evenodd"
+                                            d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2zm6.5 5a.5.5 0 0 0-1 0v4.793L5.354 7.646a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 9.793V5z" />
+                                    </svg>
+                                </span>
+                            </button>
+                        </h2>
+                    </div>
+                    <div id="collapse{{forloop.counter}}" {% if forloop.counter == 1 %} class="collapse show" {% else %}
+                        class="collapse" {% endif %} aria-labelledby="heading{{forloop.counter}}"
+                        data-parent="#accordionExample">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-12">
+                                    {% with forloop.counter as outer_counter %}
+                                    {% for les in lessons %}
+                                    {% if forloop.counter == outer_counter %}
+                                    {% for lesson in les %}
+                                    <button value="{{lesson.id}}" id="abcd"
+                                        style="text-decoration: none;border: none;outline: none;">{{lesson.name}}</button>
+                                    <hr>
+                                    {% endfor %}
+                                    {% endif %}
+                                    {% endfor %}
+                                    {% endwith %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="col-sm-12 col-md-6 container">
+            <h3><strong>About the Course :</strong></h3>
+            <hr>
+            <p>
+                Lorem ipsum, dolor sit amet consectetur adipisicing elit. Inventore, voluptatem, architecto fuga
+                expedita tenetur corporis debitis optio doloremque magni provident sed veritatis necessitatibus, quae
+                error minus pariatur placeat quidem dolores.
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Sit voluptate sint facere unde et sapiente fuga
+                facilis nam atque. Facere, doloremque. Accusantium voluptatem nisi excepturi, laudantium pariatur
+                tenetur nam! Culpa.
+            </p>
+        </div>
+    </div>
+    <div class="card my-4">
+        <h5 class="card-header">About Instructor</h5>
+        <div class="card-body">
+            <div class="card mb-3">
+                <div class="row g-0">
+                    <div class="col-md-4">
+                        <img src="{% static 'images/img-6.jpg' %}" alt="..." class="img-fluid">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <h5 class="card-title"><strong>{{course.teacher.user.username}}</strong></h5>
+                            <p class="card-text">
+                                Lorem ipsum dolor, sit amet consectetur adipisicing elit.
+                                Dolore ab saepe ullam. Laboriosam explicabo, quas ratione
+                                quisquam magni iusto illum neque ea, tempore rem vitae odio
+                                laudantium, similique dolore quo.
+                                Lorem ipsum dolor, sit amet consectetur adipisicing elit.
+                                Dolore ab saepe ullam. Laboriosam explicabo, quas ratione
+                                quisquam magni iusto illum neque ea, tempore rem vitae odio
+                                laudantium, similique dolore quo.
+                            </p>
+                            <button class="btn btn-outline-success">Sell all his courses</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container mb-5 mt-5">
+        <div class="card" id="caa">
+            <div class="row">
+                <div class="col-md-12">
+                    <h4 class="text-center mb-5 p-3 bg-light">
+                        <button class="btn btn-danger text-light">
+                            Reviews By the Students
+                        </button>
+                    </h4>
+                    <div class="container my-4">
+                        <div class="row">
+                          <div class="col-sm-12 col-md-6">
+                            <div class="rating-block">
+                              <h4>Average user rating</h4>
+                              <h2 class="bold padding-bottom-7">3.3 <small>/ 5</small></h2>
+                              <button type="button" class="btn btn-warning btn-sm" aria-label="Left Align">
+                                <svg width="1.5em" height="1.5em" viewBox="0 0 16 16" class="bi bi-star" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                  <path fill-rule="evenodd" d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.523-3.356c.329-.314.158-.888-.283-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767l-3.686 1.894.694-3.957a.565.565 0 0 0-.163-.505L1.71 6.745l4.052-.576a.525.525 0 0 0 .393-.288l1.847-3.658 1.846 3.658a.525.525 0 0 0 .393.288l4.052.575-2.906 2.77a.564.564 0 0 0-.163.506l.694 3.957-3.686-1.894a.503.503 0 0 0-.461 0z"/>
+                                </svg>
+                              </button>
+                              <button type="button" class="btn btn-warning btn-sm" aria-label="Left Align">
+                                <svg width="1.5em" height="1.5em" viewBox="0 0 16 16" class="bi bi-star" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                  <path fill-rule="evenodd" d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.523-3.356c.329-.314.158-.888-.283-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767l-3.686 1.894.694-3.957a.565.565 0 0 0-.163-.505L1.71 6.745l4.052-.576a.525.525 0 0 0 .393-.288l1.847-3.658 1.846 3.658a.525.525 0 0 0 .393.288l4.052.575-2.906 2.77a.564.564 0 0 0-.163.506l.694 3.957-3.686-1.894a.503.503 0 0 0-.461 0z"/>
+                                </svg>
+                              </button>
+                              <button type="button" class="btn btn-warning btn-sm" aria-label="Left Align">
+                                <svg width="1.5em" height="1.5em" viewBox="0 0 16 16" class="bi bi-star" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                  <path fill-rule="evenodd" d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.523-3.356c.329-.314.158-.888-.283-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767l-3.686 1.894.694-3.957a.565.565 0 0 0-.163-.505L1.71 6.745l4.052-.576a.525.525 0 0 0 .393-.288l1.847-3.658 1.846 3.658a.525.525 0 0 0 .393.288l4.052.575-2.906 2.77a.564.564 0 0 0-.163.506l.694 3.957-3.686-1.894a.503.503 0 0 0-.461 0z"/>
+                                </svg>
+                              </button>
+                              <button type="button" class="btn btn-default btn-grey btn-sm" aria-label="Left Align">
+                                <svg width="1.5em" height="1.5em" viewBox="0 0 16 16" class="bi bi-star" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                  <path fill-rule="evenodd" d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.523-3.356c.329-.314.158-.888-.283-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767l-3.686 1.894.694-3.957a.565.565 0 0 0-.163-.505L1.71 6.745l4.052-.576a.525.525 0 0 0 .393-.288l1.847-3.658 1.846 3.658a.525.525 0 0 0 .393.288l4.052.575-2.906 2.77a.564.564 0 0 0-.163.506l.694 3.957-3.686-1.894a.503.503 0 0 0-.461 0z"/>
+                                </svg>
+                              </button>
+                              <button type="button" class="btn btn-default btn-grey btn-sm" aria-label="Left Align">
+                                <svg width="1.5em" height="1.5em" viewBox="0 0 16 16" class="bi bi-star" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                  <path fill-rule="evenodd" d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.523-3.356c.329-.314.158-.888-.283-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767l-3.686 1.894.694-3.957a.565.565 0 0 0-.163-.505L1.71 6.745l4.052-.576a.525.525 0 0 0 .393-.288l1.847-3.658 1.846 3.658a.525.525 0 0 0 .393.288l4.052.575-2.906 2.77a.564.564 0 0 0-.163.506l.694 3.957-3.686-1.894a.503.503 0 0 0-.461 0z"/>
+                                </svg>
+                              </button>
+                            </div>
+                          </div>
+                          <div class="col-sm-12 col-md-4">
+                            <h4>Rating breakdown</h4>
+                            <div class="pull-left">
+                              <div class="pull-left" style="width:35px; line-height:1;">
+                                <div style="height:9px; margin:5px 0;">
+                                  5
+                                </div>
+                              </div>
+                              <div class="pull-left" style="width:180px;">
+                                <div class="progress" style="height:9px; margin:8px 0;">
+                                  <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="5" aria-valuemin="0"
+                                    aria-valuemax="5" style="width: 1000%">
+                                    <span class="sr-only">80% Complete (danger)</span>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="pull-right" style="margin-left:10px;">1</div>
+                            </div>
+                            <div class="pull-left">
+                              <div class="pull-left" style="width:35px; line-height:1;">
+                                <div style="height:9px; margin:5px 0;">4 <span class="glyphicon glyphicon-star"></span></div>
+                              </div>
+                              <div class="pull-left" style="width:180px;">
+                                <div class="progress" style="height:9px; margin:8px 0;">
+                                  <div class="progress-bar progress-bar-primary" role="progressbar" aria-valuenow="4" aria-valuemin="0"
+                                    aria-valuemax="5" style="width: 80%">
+                                    <span class="sr-only">80% Complete (danger)</span>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="pull-right" style="margin-left:10px;">1</div>
+                            </div>
+                            <div class="pull-left">
+                              <div class="pull-left" style="width:35px; line-height:1;">
+                                <div style="height:9px; margin:5px 0;">3 <span class="glyphicon glyphicon-star"></span></div>
+                              </div>
+                              <div class="pull-left" style="width:180px;">
+                                <div class="progress" style="height:9px; margin:8px 0;">
+                                  <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="3" aria-valuemin="0"
+                                    aria-valuemax="5" style="width: 60%">
+                                    <span class="sr-only">80% Complete (danger)</span>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="pull-right" style="margin-left:10px;">0</div>
+                            </div>
+                            <div class="pull-left">
+                              <div class="pull-left" style="width:35px; line-height:1;">
+                                <div style="height:9px; margin:5px 0;">2 <span class="glyphicon glyphicon-star"></span></div>
+                              </div>
+                              <div class="pull-left" style="width:180px;">
+                                <div class="progress" style="height:9px; margin:8px 0;">
+                                  <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="2" aria-valuemin="0"
+                                    aria-valuemax="5" style="width: 40%">
+                                    <span class="sr-only">80% Complete (danger)</span>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="pull-right" style="margin-left:10px;">0</div>
+                            </div>
+                            <div class="pull-left">
+                              <div class="pull-left" style="width:35px; line-height:1;">
+                                <div style="height:9px; margin:5px 0;">1 <span class="glyphicon glyphicon-star"></span></div>
+                              </div>
+                              <div class="pull-left" style="width:180px;">
+                                <div class="progress" style="height:9px; margin:8px 0;">
+                                  <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="1" aria-valuemin="0"
+                                    aria-valuemax="5" style="width: 20%">
+                                    <span class="sr-only">80% Complete (danger)</span>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="pull-right" style="margin-left:10px;">0</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="container">
+                        {% if check == 1 %}
+                        <button type="button" class="btn btn-outline-success btn-md" data-toggle="modal" data-target="#exampleModal">
+                          Give Your Course Review
+                        </button>
+                        {% endif %}
+                        <div class="row">
+                          <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <h5 class="modal-title">Give Your Review here</h5>
+                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                  </button>
+                                </div>
+                                <div class="modal-body">
+                                  <form action="{% url 'add_review' course.course_name %}" method="POST">
+                                    {% csrf_token %}
+                                    <div class="mb-3">
+                                      <label for="comment" class="form-label">Enter Your Comment[Review]</label>
+                                      <input type="text" class="form-control" id="comment" name="comment">
+                                    </div>
+                                    <div class="star-rating">
+                                      <label for="rating" class="form-label">Enter Your Review</label><br>
+                                      <fieldset>
+                                        <input type="radio" id="star5" name="rating" value="5" /><label for="star5" title="Outstanding">5 stars</label>
+                                        <input type="radio" id="star4" name="rating" value="4" /><label for="star4" title="Very Good">4 stars</label>
+                                        <input type="radio" id="star3" name="rating" value="3" /><label for="star3" title="Good">3 stars</label>
+                                        <input type="radio" id="star2" name="rating" value="2" /><label for="star2" title="Poor">2 stars</label>
+                                        <input type="radio" id="star1" name="rating" value="1" /><label for="star1" title="Very Poor">1 star</label>
+                                      </fieldset>
+                                    </div> 
+                                    <input value="Submit Your Review" class="btn btn-outline-danger" type="submit">   
+                                  </form>
+                                </div>
+                                <div class="modal-footer">
+                                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                    </div>
+                    <div class="container d-flex justify-content-center mt-100 mb-100">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="card">
+                                    <div class="comment-widgets m-b-20">
+                                        {% for comment in comments %}
+                                        <div class="d-flex flex-row comment-row">
+                                            <div class="p-2"><span class="round"><img src="{% static 'images/img-6.jpg' %}" alt="user" width="50" height="50"></span></div>
+                                            <div class="comment-text w-100">
+                                                <h5>{{comment.fromm.user}}</h5>
+                                                <span class="rating-static rating-{{comment.get_rating.ratee}}"></span>
+                                                <div class="comment-footer"> <span class="date"></span> <span class="label label-info">Enrolled</span> <span class="action-icons"> <a href="#" data-abc="true"><i class="fa fa-pencil"></i></a>  <a href="#" data-abc="true"><i class="fa fa-heart"></i></a> </span> </div>
+                                                <p class="m-b-5 m-t-10">{{comment.content}}</p>
+                                            </div>
+                                        </div>
+                                        {% for reply in comment.get_replies %}
+                                                <div class="d-flex flex-row comment-row ml-5">
+                                                    <div class="p-2"><span class="round"><img src="{% static 'images/img-6.jpg' %}" alt="user" width="50" height="50"></span></div>
+                                                    <div class="comment-text w-100">
+                                                        <h5>{{reply.fromm.user}}</h5>
+                                                        <div class="comment-footer"> <span class="date">April 14, 2019</span> <span class="label label-info">Student</span> <span class="action-icons"> <a href="#" data-abc="true"><i class="fa fa-pencil"></i></a> <a href="#" data-abc="true"><i class="fa fa-rotate-right"></i></a> <a href="#" data-abc="true"><i class="fa fa-heart"></i></a> </span> </div>
+                                                        <p class="m-b-5 m-t-10">{{reply.content}}</p>
+                                                    </div>
+                                                </div>
+                                        {% endfor %}
+                                      {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block js %}
+{% endblock %}

@@ -1,0 +1,30 @@
+{%  extends 'base.html' %}
+{% load static %}
+
+{% block body %}
+<div class="container my-4">
+    <div class="my-4">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item"><a href="#" class="text-success">Courses</a></li>
+              <li class="breadcrumb-item active" aria-current="page">All</li>
+            </ol>
+        </nav>
+    </div>
+    <div class="row row-cols-1 row-cols-md-4 row-cols-1 row-cols-sm-2 g-4">
+    {% for course in courses %}    
+      <div class="col p-3 rounded">
+          <div class="card">
+            <img src="{% static 'images/img-6.jpg' %}" class="card-img-top" alt="...">
+            <div class="card-body">
+              <span class="badge rounded-pill bg-success float-right mt-1">{{course.teacher.user.username}}</span>
+              <h5 class="card-title"><a href="{% url 'single' course.course_name %}" class="text-dark">{{course.course_name}}</a></h5>
+              <p class="card-text">{{course.course_description}}</p>
+              <a href="{% url 'course_dashboard' course.course_name %}" class="btn btn-outline-success btn-block">Course Dashboard</a>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+     </div>
+</div>
+{% endblock %}

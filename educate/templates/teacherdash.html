@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+
+{% block body %}
+<div class="container my-4">
+    <h1 class="bg-light p-2 text-center"><button class="btn btn-danger">Teacher Dashboard</button></h1>
+</div>
+
+<div class="container my-4">
+    <div class="row">
+        <div class="col-3">
+            <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                <a class="nav-link active" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-home" role="tab"
+                    aria-controls="v-pills-home" aria-selected="true">Add Course</a>
+                <a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="#v-pills-profile" role="tab"
+                    aria-controls="v-pills-profile" aria-selected="false">Add Topics</a>
+                <a class="nav-link" id="v-pills-messages-tab" data-toggle="pill" href="#v-pills-messages" role="tab"
+                    aria-controls="v-pills-messages" aria-selected="false">Add Lesson</a>
+                <a class="nav-link" id="v-pills-whattoknow-tab" data-toggle="pill" href="#v-pills-whattoknow" role="tab"
+                    aria-controls="v-pills-whattoknow" aria-selected="false">Add What to Know Before Taking Course</a>
+                <a class="nav-link" id="v-pills-whatyouwilllearn-tab" data-toggle="pill" href="#v-pills-whatyouwilllearn" role="tab"
+                    aria-controls="v-pills-whatyouwilllearn" aria-selected="false">Add What You Will Learn</a>
+            </div>
+        </div>
+        <div class="col-9">
+            <div class="tab-content" id="v-pills-tabContent">
+                <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel"
+                    aria-labelledby="v-pills-home-tab">
+                    <form action="{% url 'addcourse' %}" method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="coursename" class="form-label">Name of the Course</label>
+                            <input type="text" class="form-control" name="course_name">
+                        </div>
+                        <div class="mb-3">
+                            <label for="coursedescription" class="form-label">Course Description</label>
+                            <br>
+                            <textarea name="course_description" cols="70" rows="5"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="thumbnail" class="form-label">Upload Thumbnail</label>
+                            <input type="file" class="form-control" name="thumbnail">
+                        </div>
+                        <button type="submit" class="btn btn-danger">Add Course</button>
+                    </form>
+                </div>
+                <div class="tab-pane fade" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab">
+                    <form action="{% url 'addtopic' %}" method="POST">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="coursename" class="form-label">Select the Course</label>
+                            <select class="form-select" aria-label="Default select example" name="course_select">
+                                <option selected>Open the Courses</option>
+                                {% for course in courses %}
+                                    <option value="{{course.course_name}}">{{course.course_name}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="topicname" class="form-label">Name of the topic</label>
+                            <input type="text" class="form-control" name="topic_name">
+                        </div>
+                        <button type="submit" class="btn btn-danger">Add Topic</button>
+                    </form>
+                </div>
+                <div class="tab-pane fade" id="v-pills-messages" role="tabpanel" aria-labelledby="v-pills-messages-tab">
+                    <form action="{% url 'addlesson' %}" method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="coursename" class="form-label">Select the Topic</label>
+                            <select class="form-select" aria-label="Default select example" name="topic_select">
+                                <option selected>Select</option>
+                                {% for topic in topics %}
+                                    <option value="{{topic.name}}">{{topic.name}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="lessonname" class="form-label">Name of the Lesson</label>
+                            <input type="text" class="form-control" name="lesson_name">
+                        </div>
+                        <div class="mb-3">
+                            <label for="videoorfile" class="form-label">Upload any Video/File/Content</label>
+                            <input type="file" class="form-control" name="myfile">
+                        </div>
+                        <div class="mb-3">
+                            <label for="type" class="form-label">Select the Type of content</label>
+                            <select class="form-select" aria-label="Default select example" name="type_select">
+                                <option selected>Select</option>
+                                    <option value="video">Video</option>
+                                    <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-danger">Add Lesson</button>
+                    </form>
+                </div>
+                <div class="tab-pane fade" id="v-pills-whattoknow" role="tabpanel" aria-labelledby="v-pills-whattoknow-tab">
+                    <form action="{% url 'whattoknow' %}" method="POST">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="coursename" class="form-label">Select the Course</label>
+                            <select class="form-select" aria-label="Default select example" name="course_select">
+                                <option selected>Open the Courses</option>
+                                {% for course in courses %}
+                                    <option value="{{course.course_name}}">{{course.course_name}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="whattoknow" class="form-label">What to Know Before :</label>
+                            <input type="text" class="form-control" name="what_to_learn">
+                        </div>
+                        <button type="submit" class="btn btn-danger">Add What to Know</button>
+                    </form>
+                </div>
+                <div class="tab-pane fade" id="v-pills-whatyouwilllearn" role="tabpanel" aria-labelledby="v-pills-whatyouwilllearn-tab">
+                    <form action="{% url 'whatwillyoulearn' %}" method="POST">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="coursename" class="form-label">Select the Course</label>
+                            <select class="form-select" aria-label="Default select example" name="course_select">
+                                <option selected>Open the Courses</option>
+                                {% for course in courses %}
+                                    <option value="{{course.course_name}}">{{course.course_name}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="whatyouwilllearn" class="form-label">What You Would Learn from this Course :</label>
+                            <input type="text" class="form-control" name="what_you_will_learn">
+                        </div>
+                        <button type="submit" class="btn btn-danger">Add What You Would Learn</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
